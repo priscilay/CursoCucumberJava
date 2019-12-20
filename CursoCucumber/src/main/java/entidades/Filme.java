@@ -12,4 +12,12 @@ public class Filme {
 	public void setAluguel(int arg1) {
 		this.aluguel = arg1;
 	}
+
+	public int getEstoque() {
+		return estoque;
+	}
+
+	public int getAluguel() {
+		return aluguel;
+	}
 }

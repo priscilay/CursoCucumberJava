@@ -1,5 +1,7 @@
 package steps;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -10,12 +12,15 @@ import entidades.Filme;
 import entidades.NotaDeAluguel;
 import junit.framework.Assert;
 import services.AluguelService;
+import utils.DateUtils;
 
 public class AlugarFilmeSteps {
 
 	private Filme filme = new Filme();
 	private AluguelService aluguel = new AluguelService();
 	private NotaDeAluguel nota = new NotaDeAluguel();
+	private String erro;
+	private String tipoAluguel;
 	
 	@Dado("^um filme com estoque de (\\d+) unidades$")
 	public void umFilmeComEstoqueDeUnidades(int arg1) throws Throwable {
@@ -30,7 +35,12 @@ public class AlugarFilmeSteps {
 
 	@Quando("^alugar$")
 	public void alugar() throws Throwable {
-		nota = aluguel.alugar(filme);
+		try {
+			nota = aluguel.alugar(filme, tipoAluguel);
+		} catch (RuntimeException e) {
+			erro = e.getMessage();
+		}
+
 	}
 
 	@SuppressWarnings("deprecation")
@@ -60,7 +70,34 @@ public class AlugarFilmeSteps {
 	public void oEstoqueDoFilmeSeraDeUnidades(int arg1) throws Throwable {
 		System.out.println(filme.getEstoque());
 		Assert.assertEquals(arg1, filme.getEstoque());
-	
 	}
+	
+	@Entao("^nao sera possivel por falta de estoque$")
+	public void naoSeraPossivelPorFaltaDeEstoque() throws Throwable {
+		Assert.assertEquals("Filme sem estoque!", erro);
+	}
+	
+	@Dado("^que o tipo de aluguel seja extendido$")
+	public void queOTipoDeAluguelSejaExtendido() throws Throwable {
+		tipoAluguel = "extendido";
+	}
+
+	@Entao("^a data de entrega sera em (\\d+) dias$")
+	public void aDataDeEntregaSeraEmDias(int arg1) throws Throwable {
+		Date dataEsperada = DateUtils.obterDataDiferencaDias(arg1);
+		Date dataReal = nota.getDataEntrega();
+		
+		DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		
+		Assert.assertEquals(format.format(dataEsperada), format.format(dataReal));
+	}
+
+	@Entao("^a pontuacao recebida sera de (\\d+) pontos$")
+	public void aPontuacaoRecebidaSeraDePontos(int arg1) throws Throwable {
+		Assert.assertEquals(arg1, nota.getPontuacao());
+
+	}
+
+
 
 }

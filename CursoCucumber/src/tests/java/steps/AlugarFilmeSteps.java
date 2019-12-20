@@ -38,8 +38,6 @@ public class AlugarFilmeSteps {
 	public void oPrecoDoAluguelSeraR$(int arg1) throws Throwable {
 		System.out.println(nota.getPreco());
 		Assert.assertEquals(arg1, nota.getPreco());
-		
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -57,8 +55,11 @@ public class AlugarFilmeSteps {
 		Assert.assertEquals(cal.get(Calendar.YEAR), calRetorno.get(Calendar.YEAR));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Entao("^o estoque do filme sera de (\\d+) unidades$")
 	public void oEstoqueDoFilmeSeraDeUnidades(int arg1) throws Throwable {
+		System.out.println(filme.getEstoque());
+		Assert.assertEquals(arg1, filme.getEstoque());
 	
 	}
 
